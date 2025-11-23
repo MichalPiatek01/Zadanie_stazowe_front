@@ -99,7 +99,7 @@ export default function Home() {
     }
 
     return (
-        <div style={{ padding: "20px", maxWidth: "900px", margin: "auto" }}>
+        <div style={{ padding: "20px", maxWidth: "950px", margin: "auto" }}>
             <h1>Energia — Podsumowanie</h1>
 
             <h2>Miks energetyczny</h2>
