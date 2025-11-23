@@ -11,11 +11,15 @@ export default function Home() {
     useEffect(() => {
         async function fetchEnergyMix() {
             try {
-                const res = await fetch("http://localhost:8080/api/energy/mix");
+                const res = await fetch("/api/energy/mix");
+                if (!res.ok) {
+                    throw new Error("Failed to fetch energy mix");
+                }
                 const data = await res.json();
                 setEnergyData(data);
             } catch (err) {
                 console.error("Error fetching mix: ", err);
+                setError("Nie udało się pobrać miksu energetycznego.");
             }
         }
         fetchEnergyMix();
@@ -72,15 +76,16 @@ export default function Home() {
         setOptimal(null);
 
         try {
-            const res = await fetch(
-                `http://localhost:8080/api/energy/optimal-window?hours=${hours}`
-            );
+            const res = await fetch(`/api/energy/optimal-window?hours=${hours}`);
 
-            if (!res.ok) throw new Error("backend error");
+            if (!res.ok) {
+                throw new Error("backend error");
+            }
 
             const data = await res.json();
             setOptimal(data);
         } catch (err) {
+            console.error("Error fetching optimal window: ", err);
             setError("Nie udało się pobrać najlepszego okna ładowania.");
         }
     }
@@ -99,7 +104,13 @@ export default function Home() {
 
             <h2>Miks energetyczny</h2>
 
-            <div style={{ display: "flex", gap: "20px" }}>
+            {error && (
+                <p style={{ color: "red" }}>
+                    {error}
+                </p>
+            )}
+
+            <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
                 {energyData.map((dayData, index) => (
                     <div key={index} style={{ width: "300px", textAlign: "center" }}>
                         <h3>{dayData.date}</h3>
@@ -138,8 +149,6 @@ export default function Home() {
             >
                 Oblicz
             </button>
-
-            {error && <p style={{ color: "red" }}>{error}</p>}
 
             {optimal && (
                 <div
